@@ -8,6 +8,7 @@ import gensim
 import pattern
 from datetime import timedelta
 from gensim.utils import lemmatize
+from geolite2 import geolite2
 from time import mktime
 from datetime import datetime
 from nltk.stem.snowball import SnowballStemmer
@@ -20,6 +21,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from django.db.models import F
 from .models import News
+from .models import Country
 from .models import Category 
 from .models import Rsslinks1
 from .models import Rsslinks2
@@ -86,11 +88,13 @@ def url_exists(news_url):
 		return False
 
 
-def fetching_news(num_category):
+def fetching_news(request):
+	num_category = 5
 	rss_links = Rsslinks1.objects.all()
 	print("Getting the news for Category 1")
 	for links in rss_links:
 		news_rss = links.rss_link
+		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		print(news_rss.strip())
@@ -116,7 +120,7 @@ def fetching_news(num_category):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "1", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "1", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -126,6 +130,7 @@ def fetching_news(num_category):
 	print("Getting the news for Category 2")
 	for links in rss_links:
 		news_rss = links.rss_link 
+		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		print(news_rss.strip())
@@ -150,7 +155,7 @@ def fetching_news(num_category):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)					
@@ -160,6 +165,7 @@ def fetching_news(num_category):
 	print("Getting the news for Category 3")
 	for links in rss_links:
 		news_rss = links.rss_link 
+		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		print(news_rss.strip())
@@ -184,7 +190,7 @@ def fetching_news(num_category):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "3", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "3", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -193,6 +199,7 @@ def fetching_news(num_category):
 	print("Getting the news for Category 4")
 	for links in rss_links:
 		news_rss = links.rss_link 
+		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		print(news_rss.strip())
@@ -217,7 +224,7 @@ def fetching_news(num_category):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "4", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "4", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -226,6 +233,7 @@ def fetching_news(num_category):
 	print("Getting the news for Category 5")
 	for links in rss_links:
 		news_rss = links.rss_link 
+		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		print(news_rss.strip())
@@ -250,46 +258,15 @@ def fetching_news(num_category):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "5", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "5", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
+	return HttpResponse("data loading done")
 
-"""
-def fetching_news(num_category):
-	for x in range(num_category):
-		filepath = 'categoryrss' + str(x) + '.txt'
-		print(filepath)
-		with open(filepath) as fp:
-			line = fp.readline()
-			cnt = 1
-			print(cnt)
-			while line:
-				print("RSS LINK : " + line.strip())
-				d = feedparser.parse(line.strip())
-				print("here")
-				for post in d.entries:
-					print(post.title)
-					print(post.link)
-					if url_exists(post.link):
-						print("News already exists")
-					else:
-						try:
-							article = Article(post.link)
-							article.download()
-							article.parse()
-							article_body = clean_article(str(article.text))
-							print("DONEEEEEEEEE")
-							news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = str(x+1), news_date = datetime.fromtimestamp(mktime(post.published_parsed)))		
-						except:
-							print("Can't deal with it")		
-				line = fp.readline()
-				cnt += 1
-"""
 
 def get_similarity_matrix(content_as_str):
-    tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=200000,min_df=0.2,stop_words='english',use_idf=True,
-                                       tokenizer=tokenize_and_stem, ngram_range=(1,3))
+    tfidf_vectorizer = TfidfVectorizer(use_idf=True, ngram_range=(1,3))
     tfidf_matrix = tfidf_vectorizer.fit_transform(content_as_str) #fit the vectorizer to synopses
     similarity_matrix = cosine_similarity(tfidf_matrix)
     return (similarity_matrix, tfidf_matrix)
@@ -311,11 +288,21 @@ def get_business(request):
 	
 
 def show_news(request, category):
-	print(get_client_ip(request),"Client ip address")
+	client_ip = get_client_ip(request)
+	reader = geolite2.reader()
+	print(client_ip)
+	client_ip = '1.7.255.255'
+	d = reader.get(client_ip)
+	country_name = d['country']['names']['en']
+	print(country_name)
+
+	country_instance = Country.objects.get(country_name = country_name)
+
+	print(country_instance.country_id)
+
 	category_instance = Category.objects.get(category_id = category)
-	news_instance = News.objects.filter(news_category=category)
+	news_instance = News.objects.filter(news_category=category, news_country_id = country_instance.country_id)
 	list_of_cluster = clusttering(news_instance)
-	print(list_of_cluster[0][0][2])
 	return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_instance.category_name})
 	
 
@@ -339,14 +326,15 @@ def clusttering(news_instance):
 		title_list.append(article.news_title)
 		cleaned_content_as_str.append(article.news_body)
 		img_url.append(article.news_img_url)
-		print(article.news_img_url)
 		published_date.append(article.news_date)
-			#response_string = response_string + "<h3>" + article.news_title + "</h3> <br> <a href=" + article.news_url + ">Link</a> <br>"
+
 	(similarity_matrix, tfidf_matrix) = get_similarity_matrix(cleaned_content_as_str)
 	dist = 1 - cosine_similarity(tfidf_matrix)
 	Z = hierarchy.ward(dist)
 		
-	cluster_labels = fcluster(Z, 1.7, criterion='distance')
+	print(Z)
+
+	cluster_labels = fcluster(Z, 1.392, criterion='distance')
 	d = {}
 	iterator_index = 0
 	for x in cluster_labels:

@@ -7,4 +7,5 @@ urlpatterns = [
 	url(r'^Trending/$',views.get_trending,name='trending'),
 	url(r'^Technology/$',views.get_technology,name='technology'),	
 	url(r'^Business/$',views.get_business,name='business'),
+	url(r'^fetch/$',views.fetching_news,name='fetch'),
 ]
