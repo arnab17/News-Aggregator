@@ -1,0 +1,38 @@
+{% extends 'google_news/ui.html' %}
+
+{% block cont %}
+
+ <h4><strong><big> {{category}}</strong></big> </h4>
+{%for cluster in list_of_cluster%}
+ <div class="panel panel-default">
+        
+<div class="panel-body">
+        <div class="col-sm-10" >
+        
+                
+                
+                <a href= {{cluster.0.0}} style="color: black"><h4><b>{{cluster.0.1}}</b></br> <small>{{cluster.0.3}}</small></h4></a>
+                </br>
+                        <ul style="font-weight: bold;">
+                                 {%for url,title,img,date in cluster%}
+                                 {% if not forloop.first %}
+                                <li><a href = {{url}} style="color: black">{{title}}</a></br> <small>{{date}}</small></li>
+                                {% endif%}
+                                {%endfor%}
+                               
+                        </ul>
+                
+        </div>  
+        <div class="col-sm-2 text-center">
+                <img src={{cluster.0.2}} class="img-rounded" height="105" width="105" alt="Avatar">
+                </br>
+                </br>
+                
+        </div>
+</div>
+</div>
+{%endfor%}
+{% endblock %}
+
+
+

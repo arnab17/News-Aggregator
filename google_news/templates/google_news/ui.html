@@ -1,0 +1,106 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ 
+  <style>    
+    /* Set black background color, white text and some padding */
+      footer {
+          background-color: #555;
+          color: white;
+        padding: 15px;
+      }
+    
+      body {
+          padding-bottom: 40px;
+          padding-top: 60px;
+      }
+
+      .sidebar-nav-fixed {
+          width:14%;
+      }
+      .navbar {
+    -webkit-box-shadow: 0 8px 6px -6px #999;
+    -moz-box-shadow: 0 8px 6px -6px #999;
+    box-shadow: 0 8px 6px -6px #999;
+
+    /* the rest of your styling */
+}
+
+  </style>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top navbar-default">
+  <div class="shadow p-3 mb-5 bg-white rounded">
+    <div class="container-fluid ">
+        <div class="navbar-header"><a class="navbar-brand" href="#"><strong>Media.net News</strong></a>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+         
+            <div class="sidebar-nav-fixed affix">  
+               <div id="topheader">
+                <ul class="nav nav-pills nav-stacked">
+
+                  <li class="{% ifequal request.path '/google_news/'%} active {% endifequal%}"><a href="{% url 'top_stories' %}">Top Stories</a></li>
+                    <li class="{% ifequal request.path '/google_news/Sports/'%} active {% endifequal%}"><a href ="{% url 'sports' %}">Sports</a></li>
+
+                    <li class="{% ifequal request.path '/google_news/Trending/'%} active {% endifequal%}"><a href="{% url 'trending' %}">Trending</a></li>
+                    <li class="{% ifequal request.path '/google_news/Technology/'%} active {% endifequal%}"><a href="{% url 'technology' %}">Technology</a></li>
+                    <li class="{% ifequal request.path '/google_news/Business/'%} active {% endifequal%}"><a href="{% url 'business' %}">Business</a></li>
+                </ul>
+                <br>
+            </div>
+          </div>
+        </div>
+
+<!-- Nav complete -->
+
+        <div class="col-sm-7">
+            
+            <div class="row">
+                <div class="panel-group">
+                   
+                        {% block cont %}
+                        {% endblock %}
+                  
+                </div>
+            </div>
+        </div>
+     
+     
+     <!-- Middle part complete -->
+     
+        <div class="col-sm-3"> 
+            <div class="well"> 
+                <b>Weather</b>
+            </div>
+            <div class="well">
+                <b>In the news</b>
+                <hr style="border-color:grey"></hr>
+                <button type="button" class="btn btn-default">Default</button>
+                <button type="button" class="btn btn-default">Dscwcwcwcwefault</button>
+                <button type="button" class="btn btn-default">D</button>
+                <button type="button" class="btn btn-default">Default</button>
+                <button type="button" class="btn btn-default">Default</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<script src="{% static 'google_news/js/access.js' %}"></script>-->
+</body>
+</html>
