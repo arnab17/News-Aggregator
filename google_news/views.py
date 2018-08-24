@@ -11,7 +11,7 @@ from datetime import timedelta
 from gensim.utils import lemmatize
 from geolite2 import geolite2
 from time import mktime
-from datetime import datetime
+from datetime import datetime, timezone
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 from newspaper import Article
@@ -129,7 +129,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "1", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "1", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -174,7 +174,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)	
@@ -218,7 +218,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "3", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "3", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -261,7 +261,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "4", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "4", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -304,7 +304,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "5", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "5", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -423,8 +423,30 @@ def clusttering(news_instance, global_news_instance):
 		news_list = []
 			#response_string = response_string + "<h3>" + str(key) + "</h3> <br>"
 		for urls,title,img,date,rank,org_name in d[key]:
-			news_list.append((urls, title, img, date, rank, org_name))
-				#response_string = response_string + "<h3>" + title + "</h3> <br> <a href=" + urls + ">Link</a> <br>"
+			now = datetime.now(timezone.utc)
+			delta = now - date
+			days, seconds = delta.days, delta.seconds
+
+			if days > 0 :
+				news_list.append((urls, title, img, str(days) + " days ago", rank, org_name))
+			else:
+				hours = days*24 + seconds // 3600
+				if hours > 5 :
+					news_list.append((urls, title, img, "today", rank, org_name))
+				else:
+					if hours > 0 :
+						news_list.append((urls, title, img, str(hours) + " hours ago", rank, org_name))
+					else:
+						minutes = (seconds % 3600) // 60
+						news_list.append((urls, title, img, str(minutes) + " minutes ago", rank, org_name))	
+
+			#print("----")
+			#print(now)
+			#print(date)
+			#print(now-date)
+			#print("----")
+			#news_list.append((urls, title, img, date, rank, org_name))
+			#response_string = response_string + "<h3>" + title + "</h3> <br> <a href=" + urls + ">Link</a> <br>"
 		
 		news_list.sort(key = sortrank)
 
