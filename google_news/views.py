@@ -6,6 +6,7 @@ import re
 import math
 import gensim
 import pattern
+from sklearn.cluster import KMeans
 from datetime import timedelta
 from gensim.utils import lemmatize
 from geolite2 import geolite2
@@ -17,6 +18,8 @@ from newspaper import Article
 from scipy.cluster import hierarchy
 from scipy.cluster.hierarchy import fcluster
 from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.feature_extraction.text import fit
+#from sklearn.feature_extraction.text import transform
 from sklearn.metrics.pairwise import cosine_similarity
 
 from django.db.models import F
@@ -98,17 +101,24 @@ def fetching_news(request):
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		print(news_rss.strip())
+		cnt_post = 0
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			if url_exists(post.link):
 				break
 			else:
 				new_news = new_news + 1
 
+			if(cnt_post > 30):
+				break
+
 		news_update = News.objects.filter(news_rsslink = news_rss.strip()).update(news_rank = F('news_rank') + new_news)
 		
 		news_rank = 1
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			now = datetime.now()
 			if url_exists(post.link):
 				break
@@ -125,6 +135,9 @@ def fetching_news(request):
 				except Exception as e:
 					print(e)
 
+			if(cnt_post > 30):
+				break
+
 
 	rss_links = Rsslinks2.objects.all()
 	print("Getting the news for Category 2")
@@ -133,18 +146,24 @@ def fetching_news(request):
 		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			if url_exists(post.link):
 				break
 			else:
 				new_news = new_news + 1
+			if(cnt_post > 30):
+				 break
 
 		news_update = News.objects.filter(news_rsslink = news_rss.strip()).update(news_rank = F('news_rank') + new_news)
 		
 		news_rank = 1
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			if url_exists(post.link):
 				break
 			else:
@@ -158,7 +177,9 @@ def fetching_news(request):
 					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
 					news_rank = news_rank + 1
 				except Exception as e:
-					print(e)					
+					print(e)	
+			if(cnt_post > 30):
+				break				
 
 
 	rss_links = Rsslinks3.objects.all()
@@ -168,18 +189,24 @@ def fetching_news(request):
 		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			if url_exists(post.link):
 				break
 			else:
 				new_news = new_news + 1
+			if(cnt_post > 30):
+				break
 
 		news_update = News.objects.filter(news_rsslink = news_rss.strip()).update(news_rank = F('news_rank') + new_news)
 		
 		news_rank = 1
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			if url_exists(post.link):
 				break
 			else:
@@ -194,6 +221,8 @@ def fetching_news(request):
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
+			if(cnt_post > 30):
+				break
 
 	rss_links = Rsslinks4.objects.all()
 	print("Getting the news for Category 4")
@@ -202,18 +231,24 @@ def fetching_news(request):
 		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			if url_exists(post.link):
 				break
 			else:
 				new_news = new_news + 1
+			if(cnt_post > 30):
+				break
 
 		news_update = News.objects.filter(news_rsslink = news_rss.strip()).update(news_rank = F('news_rank') + new_news)
 		
 		news_rank = 1
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post+1
 			if url_exists(post.link):
 				break
 			else:
@@ -228,6 +263,8 @@ def fetching_news(request):
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
+			if(cnt_post > 30):
+				break
 
 	rss_links = Rsslinks5.objects.all()
 	print("Getting the news for Category 5")
@@ -236,18 +273,24 @@ def fetching_news(request):
 		news_country = links.country_id
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			if url_exists(post.link):
 				break
 			else:
 				new_news = new_news + 1
+			if(cnt_post > 30):
+				break
 
 		news_update = News.objects.filter(news_rsslink = news_rss.strip()).update(news_rank = F('news_rank') + new_news)
 		
 		news_rank = 1
+		cnt_post = 0
 		print(news_rss.strip())
 		for post in d.entries:
+			cnt_post = cnt_post + 1
 			if url_exists(post.link):
 				break
 			else:
@@ -262,14 +305,20 @@ def fetching_news(request):
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
+			if(cnt_post > 30):
+				break
 	return HttpResponse("data loading done")
 
 
-def get_similarity_matrix(content_as_str):
-    tfidf_vectorizer = TfidfVectorizer(use_idf=True, ngram_range=(1,3))
-    tfidf_matrix = tfidf_vectorizer.fit_transform(content_as_str) #fit the vectorizer to synopses
-    similarity_matrix = cosine_similarity(tfidf_matrix)
-    return (similarity_matrix, tfidf_matrix)
+#tfidf_vectorizer = TfidfVectorizer(use_idf=True, ngram_range=(1,3))
+#tfidf_matrix = tfidf_vectorizer.fit_transform(content_as_str) #fit the vectorizer to synopses
+
+def get_similarity_matrix(content_as_str, global_cleaned_content_as_str):
+	tfidf_vectorizer = TfidfVectorizer(use_idf=True, ngram_range=(1,3))
+	tfidftemp = tfidf_vectorizer.fit(global_cleaned_content_as_str)
+	tfidf_matrix = tfidf_vectorizer.transform(content_as_str)
+	similarity_matrix = cosine_similarity(tfidf_matrix)
+	return (similarity_matrix, tfidf_matrix)
 
 def get_top_stories(request):
 	return show_news(request, 1)
@@ -287,6 +336,12 @@ def get_business(request):
 	return show_news(request, 5)
 	
 
+def get_cluster_kmeans(tfidf_matrix, num_clusters):
+    km = KMeans(n_clusters = num_clusters)
+    km.fit(tfidf_matrix)
+    cluster_list = km.labels_.tolist()
+    return cluster_list	
+
 def show_news(request, category):
 	client_ip = get_client_ip(request)
 	reader = geolite2.reader()
@@ -301,8 +356,10 @@ def show_news(request, category):
 	print(country_instance.country_id)
 
 	category_instance = Category.objects.get(category_id = category)
+
+	global_news_instance = News.objects.filter(news_country_id = country_instance.country_id)
 	news_instance = News.objects.filter(news_category=category, news_country_id = country_instance.country_id)
-	list_of_cluster = clusttering(news_instance)
+	list_of_cluster = clusttering(news_instance,global_news_instance)
 	return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_instance.category_name})
 	
 
@@ -315,32 +372,41 @@ def get_client_ip(request):
     return ip
 
 
-def clusttering(news_instance):
+def clusttering(news_instance, global_news_instance):
 	url_list = []
+	rank_list = []
 	title_list = []
 	cleaned_content_as_str = []
+	global_cleaned_content_as_str = []
 	img_url = []
 	published_date = []
+
+	for article in global_news_instance:
+		global_cleaned_content_as_str.append(article.news_body)
+
 	for article in news_instance:
+		rank_list.append(article.news_rank)
 		url_list.append(article.news_url)
 		title_list.append(article.news_title)
 		cleaned_content_as_str.append(article.news_body)
 		img_url.append(article.news_img_url)
 		published_date.append(article.news_date)
 
-	(similarity_matrix, tfidf_matrix) = get_similarity_matrix(cleaned_content_as_str)
+	(similarity_matrix, tfidf_matrix) = get_similarity_matrix(cleaned_content_as_str,global_cleaned_content_as_str)
 	dist = 1 - cosine_similarity(tfidf_matrix)
-	Z = hierarchy.ward(dist)
-		
+	Z = hierarchy.average(dist)
+
+
 	print(Z)
 
-	cluster_labels = fcluster(Z, 1.392, criterion='distance')
+
+	cluster_labels = fcluster(Z, 1.33, criterion='distance')
 	d = {}
 	iterator_index = 0
 	for x in cluster_labels:
 		if x not in d:
 			d[x] = []
-		d[x].append((url_list[iterator_index],title_list[iterator_index], img_url[iterator_index], published_date[iterator_index]))
+		d[x].append((url_list[iterator_index],title_list[iterator_index], img_url[iterator_index], published_date[iterator_index], rank_list[iterator_index]))
 		iterator_index = iterator_index + 1
 		
 	list_of_clusters = []
@@ -348,9 +414,12 @@ def clusttering(news_instance):
 	for key in d:
 		news_list = []
 			#response_string = response_string + "<h3>" + str(key) + "</h3> <br>"
-		for urls,title,img,date in d[key]:
-			news_list.append((urls, title, img, date))
+		for urls,title,img,date,rank in d[key]:
+			news_list.append((urls, title, img, date, rank))
 				#response_string = response_string + "<h3>" + title + "</h3> <br> <a href=" + urls + ">Link</a> <br>"
+		
+		news_list.sort(key = sortrank)
+
 		list_of_clusters.append(news_list)
 
 	return list_of_clusters

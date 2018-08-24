@@ -14,6 +14,7 @@ class News(models.Model):
 	news_rank = models.IntegerField(default=0)
 	news_img_url = models.CharField(max_length=500, default = 'SOME_STRING')
 	news_country_id = models.IntegerField(default=0)	
+	news_cluster_id = models.IntegerField(default=0)	
 
 	def __str__(self):
 		return self.news_title	
@@ -26,6 +27,10 @@ class Country(models.Model):
 
 	def __str__(self):
 		return self.country_name
+
+class Cluster(models.Model):
+	cluster_id = models.IntegerField(default=0)
+	cluster_rank = models.IntegerField(default=0)
 
 class Category(models.Model):
 	category_id = models.CharField(max_length=500)
@@ -61,4 +66,8 @@ class Rsslinks5(models.Model):
         rss_link = models.CharField(max_length=500)
         link_rank = models.IntegerField(default=0)
         country_id = models.IntegerField(default=0)
+
+class Keyword(models.Model):
+	keyword_name = models.CharField(max_length = 500)
+	news_url = models.CharField(max_length = 500)
 
