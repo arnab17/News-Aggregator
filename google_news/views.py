@@ -372,6 +372,9 @@ def get_client_ip(request):
     return ip
 
 
+def sortrank(val):
+	return val[4]
+
 def clusttering(news_instance, global_news_instance):
 	url_list = []
 	rank_list = []
