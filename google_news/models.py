@@ -32,11 +32,12 @@ class Country(models.Model):
 class Cluster(models.Model):
 	cluster_id = models.IntegerField(default=0)
 	cluster_rank = models.IntegerField(default=0)
+	cluster_country_id = models.IntegerField(default=0)
 
 class Category(models.Model):
 	category_id = models.CharField(max_length=500)
 	category_name = models.CharField(max_length=500)	
-	
+
 	def __str__(self):
 		return self.category_name
 

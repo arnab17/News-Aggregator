@@ -310,6 +310,7 @@ def fetching_news(request):
 					print(e)
 			if(cnt_post > 30):
 				break
+	#start_clustering()
 	return HttpResponse("data loading done")
 
 
@@ -373,6 +374,17 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def start_clustering():
+	categories = 5
+	num_countries = 2
+	for x in range(num_countries):
+		for y in range(categories):
+			global_news_instance = News.objects.filter(news_country_id = x+1)
+			news_instance = News.objects.filter(news_category=y+1, news_country_id = x+1)
+			list_of_cluster = clusttering(news_instance,global_news_instance)
+
 
 
 def sortrank(val):
