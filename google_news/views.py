@@ -18,8 +18,6 @@ from newspaper import Article
 from scipy.cluster import hierarchy
 from scipy.cluster.hierarchy import fcluster
 from sklearn.feature_extraction.text import TfidfVectorizer
-#from sklearn.feature_extraction.text import fit
-#from sklearn.feature_extraction.text import transform
 from sklearn.metrics.pairwise import cosine_similarity
 
 from django.db.models import F
@@ -98,6 +96,7 @@ def fetching_news(request):
 	for links in rss_links:
 		news_rss = links.rss_link
 		news_country = links.country_id
+		news_org = links.org_name
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		print(news_rss.strip())
@@ -130,7 +129,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "1", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "1", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -144,6 +143,7 @@ def fetching_news(request):
 	for links in rss_links:
 		news_rss = links.rss_link 
 		news_country = links.country_id
+		news_org = links.org_name
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		cnt_post = 0
@@ -174,7 +174,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)	
@@ -187,6 +187,7 @@ def fetching_news(request):
 	for links in rss_links:
 		news_rss = links.rss_link 
 		news_country = links.country_id
+		news_org = links.org_name
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		cnt_post = 0
@@ -217,7 +218,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "3", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "3", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -229,6 +230,7 @@ def fetching_news(request):
 	for links in rss_links:
 		news_rss = links.rss_link 
 		news_country = links.country_id
+		news_org = links.org_name
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		cnt_post = 0
@@ -259,7 +261,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "4", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "4", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -271,6 +273,7 @@ def fetching_news(request):
 	for links in rss_links:
 		news_rss = links.rss_link 
 		news_country = links.country_id
+		news_org = links.org_name
 		d = feedparser.parse(news_rss.strip())
 		new_news = 0
 		cnt_post = 0
@@ -301,7 +304,7 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "5", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country)
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "5", news_date = datetime.now(), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -383,11 +386,13 @@ def clusttering(news_instance, global_news_instance):
 	global_cleaned_content_as_str = []
 	img_url = []
 	published_date = []
+	org_name_list = []
 
 	for article in global_news_instance:
 		global_cleaned_content_as_str.append(article.news_body)
 
 	for article in news_instance:
+		org_name_list.append(article.news_org_name)
 		rank_list.append(article.news_rank)
 		url_list.append(article.news_url)
 		title_list.append(article.news_title)
@@ -409,7 +414,7 @@ def clusttering(news_instance, global_news_instance):
 	for x in cluster_labels:
 		if x not in d:
 			d[x] = []
-		d[x].append((url_list[iterator_index],title_list[iterator_index], img_url[iterator_index], published_date[iterator_index], rank_list[iterator_index]))
+		d[x].append((url_list[iterator_index],title_list[iterator_index], img_url[iterator_index], published_date[iterator_index], rank_list[iterator_index], org_name_list[iterator_index]))
 		iterator_index = iterator_index + 1
 		
 	list_of_clusters = []
@@ -417,8 +422,8 @@ def clusttering(news_instance, global_news_instance):
 	for key in d:
 		news_list = []
 			#response_string = response_string + "<h3>" + str(key) + "</h3> <br>"
-		for urls,title,img,date,rank in d[key]:
-			news_list.append((urls, title, img, date, rank))
+		for urls,title,img,date,rank,org_name in d[key]:
+			news_list.append((urls, title, img, date, rank, org_name))
 				#response_string = response_string + "<h3>" + title + "</h3> <br> <a href=" + urls + ">Link</a> <br>"
 		
 		news_list.sort(key = sortrank)

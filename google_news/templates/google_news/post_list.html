@@ -11,12 +11,12 @@
         
                 
                 
-                <a href= {{cluster.0.0}} style="color: black"><h4><b>{{cluster.0.1}}</b></br> <small>{{cluster.0.3}}</small></h4></a>
+                <a href= {{cluster.0.0}} style="color: black"><h4><b>{{cluster.0.1}}</b></br> <small>{{cluster.0.5}}</small><small>{{"&nbsp; . &nbsp;"}}</small> <small>{{cluster.0.3}}</small></h4></a>
                 </br>
                         <ul style="font-weight: bold;">
-                                 {%for url,title,img,date,rank in cluster%}
+                                 {%for url,title,img,date,rank,org_name in cluster%}
                                  {% if not forloop.first %}
-                                <li><a href = {{url}} style="color: black">{{title}}</a></br> <small>{{date}}</small></li>
+                                <li><a href = {{url}} style="color: black">{{title}}</a></br> <small>{{org_name}}</small><small>{{"&nbsp; . &nbsp;"}}</small><small>{{date}}</small></li>
                                 {% endif%}
                                 {%endfor%}
                                

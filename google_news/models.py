@@ -14,7 +14,8 @@ class News(models.Model):
 	news_rank = models.IntegerField(default=0)
 	news_img_url = models.CharField(max_length=500, default = 'SOME_STRING')
 	news_country_id = models.IntegerField(default=0)	
-	news_cluster_id = models.IntegerField(default=0)	
+	news_cluster_id = models.IntegerField(default=0)
+	news_org_name = models.CharField(max_length=500, default='news_org')	
 
 	def __str__(self):
 		return self.news_title	
@@ -43,29 +44,34 @@ class Rsslinks1(models.Model):
 	rss_link = models.CharField(max_length=500)
 	link_rank = models.IntegerField(default=0)
 	country_id = models.IntegerField(default=0)
+	org_name = models.CharField(max_length = 500, default = 'news_org')
 	
 
 class Rsslinks2(models.Model):
     rss_link = models.CharField(max_length=500)
     link_rank = models.IntegerField(default=0)
     country_id = models.IntegerField(default=0)
+    org_name = models.CharField(max_length = 500, default = 'news_org')
 
 class Rsslinks3(models.Model):
         rss_link = models.CharField(max_length=500)
         link_rank = models.IntegerField(default=0)
         country_id = models.IntegerField(default=0)
+        org_name = models.CharField(max_length = 500, default = 'news_org')
 
 
 class Rsslinks4(models.Model):
         rss_link = models.CharField(max_length=500)
         link_rank = models.IntegerField(default=0)
         country_id = models.IntegerField(default=0)
+        org_name = models.CharField(max_length = 500, default = 'news_org')
 
 
 class Rsslinks5(models.Model):
         rss_link = models.CharField(max_length=500)
         link_rank = models.IntegerField(default=0)
         country_id = models.IntegerField(default=0)
+        org_name = models.CharField(max_length = 500, default = 'news_org')
 
 class Keyword(models.Model):
 	keyword_name = models.CharField(max_length = 500)
