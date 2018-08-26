@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class News(models.Model):
-	news_url = models.CharField(max_length=500)
+	news_url = models.CharField(max_length=500, unique = True)
 	news_title = models.CharField(max_length=500)
 	news_body = models.CharField(max_length=500)
 	news_category = models.CharField(max_length=500, default='SOME_STRING')
@@ -16,6 +16,7 @@ class News(models.Model):
 	news_country_id = models.IntegerField(default=0)	
 	news_cluster_id = models.IntegerField(default=0)
 	news_org_name = models.CharField(max_length=500, default='news_org')	
+	news_summary = models.CharField(max_length = 2000, default = 'summary is ...')	
 
 	def __str__(self):
 		return self.news_title	
@@ -32,7 +33,11 @@ class Country(models.Model):
 class Cluster(models.Model):
 	cluster_id = models.IntegerField(default=0)
 	cluster_rank = models.IntegerField(default=0)
+	cluster_category_id = models.IntegerField(default=0)
 	cluster_country_id = models.IntegerField(default=0)
+	
+	class Meta:
+		ordering = ['cluster_rank']	
 
 class Category(models.Model):
 	category_id = models.CharField(max_length=500)
@@ -72,6 +77,18 @@ class Rsslinks5(models.Model):
         rss_link = models.CharField(max_length=500)
         link_rank = models.IntegerField(default=0)
         country_id = models.IntegerField(default=0)
+        org_name = models.CharField(max_length = 500, default = 'news_org')
+
+class Rsslinks6(models.Model):
+	rss_link = models.CharField(max_length = 500)
+	link_rank = models.IntegerField(default = 0)
+	country_id = models.IntegerField(default = 0)
+	org_name = models.CharField(max_length = 500, default = 'news_org')
+
+class Rsslinks7(models.Model):
+        rss_link = models.CharField(max_length = 500)
+        link_rank = models.IntegerField(default = 0)
+        country_id = models.IntegerField(default = 0)
         org_name = models.CharField(max_length = 500, default = 'news_org')
 
 class Keyword(models.Model):

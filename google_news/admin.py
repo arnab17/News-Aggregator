@@ -9,6 +9,9 @@ from .models import Rsslinks2
 from .models import Rsslinks3
 from .models import Rsslinks4
 from .models import Rsslinks5
+from .models import Rsslinks6
+from .models import Rsslinks7
+
 
 # Register your models here.
 
@@ -22,3 +25,5 @@ admin.site.register(Rsslinks2)
 admin.site.register(Rsslinks3)
 admin.site.register(Rsslinks4)
 admin.site.register(Rsslinks5)
+admin.site.register(Rsslinks6)
+admin.site.register(Rsslinks7)

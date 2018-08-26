@@ -59,9 +59,11 @@
                   <li class="{% ifequal request.path '/google_news/'%} active {% endifequal%}"><a href="{% url 'top_stories' %}">Top Stories</a></li>
                     <li class="{% ifequal request.path '/google_news/Sports/'%} active {% endifequal%}"><a href ="{% url 'sports' %}">Sports</a></li>
 
-                    <li class="{% ifequal request.path '/google_news/Trending/'%} active {% endifequal%}"><a href="{% url 'trending' %}">Trending</a></li>
+                    <li class="{% ifequal request.path '/google_news/Entertainment/'%} active {% endifequal%}"><a href="{% url 'entertainment' %}">Entertainment</a></li>
                     <li class="{% ifequal request.path '/google_news/Technology/'%} active {% endifequal%}"><a href="{% url 'technology' %}">Technology</a></li>
                     <li class="{% ifequal request.path '/google_news/Business/'%} active {% endifequal%}"><a href="{% url 'business' %}">Business</a></li>
+                    <li class="{% ifequal request.path '/google_news/Science/'%} active {% endifequal%}"><a href="{% url 'science' %}">Science</a></li>
+                    <li class="{% ifequal request.path '/google_news/World/'%} active {% endifequal%}"><a href="{% url 'world' %}">World</a></li>
                 </ul>
                 <br>
             </div>
@@ -76,6 +78,7 @@
                 <div class="panel-group">
                    
                         {% block cont %}
+
                         {% endblock %}
                   
                 </div>
@@ -84,8 +87,12 @@
      
      
      <!-- Middle part complete -->
-     
+
         <div class="col-sm-3"> 
+            <div class="btn-group">
+              <a href="" class="btn btn-primary">India</a>
+              <a href="US" class="btn btn-primary">United States</a>
+            </div>
             <div class="well"> 
                 <b>Weather</b>
             </div>

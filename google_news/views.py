@@ -24,11 +24,14 @@ from django.db.models import F
 from .models import News
 from .models import Country
 from .models import Category 
+from .models import Cluster 
 from .models import Rsslinks1
 from .models import Rsslinks2
 from .models import Rsslinks3
 from .models import Rsslinks4
 from .models import Rsslinks5
+from .models import Rsslinks6
+from .models import Rsslinks7
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -43,7 +46,6 @@ def posNN(text):
     tokens = []
     for word in lemmatize(text):
         st = word.decode("utf-8").split("/")
-        #print(st)
         if st[1] == 'NN' or st[1] == 'VB':
             tokens.append(st[0])
     stop = open("stop.txt", "r").read().split("\n")
@@ -90,7 +92,7 @@ def url_exists(news_url):
 
 
 def fetching_news(request):
-	num_category = 5
+	num_category = 7
 	rss_links = Rsslinks1.objects.all()
 	print("Getting the news for Category 1")
 	for links in rss_links:
@@ -128,8 +130,11 @@ def fetching_news(request):
 					article = Article(post.link)
 					article.download()
 					article.parse()
+					print(article.summary)
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "1", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_summary = str(article.text)
+					news_summary = news_summary.replace("\n"," ")
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "1", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org, news_summary = news_summary[:300] + "...")
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -174,7 +179,9 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_summary = str(article.text)
+					news_summary = news_summary.replace("\n"," ")
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "2", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org, news_summary = news_summary[:300] + "...")
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)	
@@ -218,7 +225,9 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "3", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_summary = str(article.text)
+					news_summary = news_summary.replace("\n"," ")
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "3", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org, news_summary = news_summary[:300]+ "...")
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -261,7 +270,9 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "4", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_summary = str(article.text)
+					news_summary = news_summary.replace("\n"," ")
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "4", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org, news_summary = news_summary[:300]+ "...")
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
@@ -304,13 +315,106 @@ def fetching_news(request):
 					article.download()
 					article.parse()
 					article_body = posNN(str(article.text))
-					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "5", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org)
+					news_summary = str(article.text)
+					news_summary = news_summary.replace("\n"," ")
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "5", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org, news_summary = news_summary[:300]+ "...")
 					news_rank = news_rank + 1
 				except Exception as e:
 					print(e)
 			if(cnt_post > 30):
 				break
-	#start_clustering()
+
+	rss_links = Rsslinks6.objects.all()
+	print("Getting the news for Category 6")
+	for links in rss_links:
+		news_rss = links.rss_link 
+		news_country = links.country_id
+		news_org = links.org_name
+		d = feedparser.parse(news_rss.strip())
+		new_news = 0
+		cnt_post = 0
+		print(news_rss.strip())
+		for post in d.entries:
+			cnt_post = cnt_post + 1
+			if url_exists(post.link):
+				break
+			else:
+				new_news = new_news + 1
+			if(cnt_post > 30):
+				break
+
+		news_update = News.objects.filter(news_rsslink = news_rss.strip()).update(news_rank = F('news_rank') + new_news)
+		
+		news_rank = 1
+		cnt_post = 0
+		print(news_rss.strip())
+		for post in d.entries:
+			cnt_post = cnt_post + 1
+			if url_exists(post.link):
+				break
+			else:
+				try:
+					print(post.title)
+					print(post.link)
+					article = Article(post.link)
+					article.download()
+					article.parse()
+					article_body = posNN(str(article.text))
+					news_summary = str(article.text)
+					news_summary = news_summary.replace("\n"," ")
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "6", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org, news_summary = news_summary[:300]+ "...")
+					news_rank = news_rank + 1
+				except Exception as e:
+					print(e)
+			if(cnt_post > 30):
+				break
+
+
+	rss_links = Rsslinks7.objects.all()
+	print("Getting the news for Category 7")
+	for links in rss_links:
+		news_rss = links.rss_link 
+		news_country = links.country_id
+		news_org = links.org_name
+		d = feedparser.parse(news_rss.strip())
+		new_news = 0
+		cnt_post = 0
+		print(news_rss.strip())
+		for post in d.entries:
+			cnt_post = cnt_post + 1
+			if url_exists(post.link):
+				break
+			else:
+				new_news = new_news + 1
+			if(cnt_post > 30):
+				break
+
+		news_update = News.objects.filter(news_rsslink = news_rss.strip()).update(news_rank = F('news_rank') + new_news)
+		
+		news_rank = 1
+		cnt_post = 0
+		print(news_rss.strip())
+		for post in d.entries:
+			cnt_post = cnt_post + 1
+			if url_exists(post.link):
+				break
+			else:
+				try:
+					print(post.title)
+					print(post.link)
+					article = Article(post.link)
+					article.download()
+					article.parse()
+					article_body = posNN(str(article.text))
+					news_summary = str(article.text)
+					news_summary = news_summary.replace("\n"," ")
+					news_instance = News.objects.create(news_url = post.link, news_title = post.title, news_body = article_body, news_category = "7", news_date = datetime.now(timezone.utc), news_rsslink = news_rss.strip(), news_rank = news_rank, news_img_url = article.top_image, news_country_id = news_country, news_org_name = news_org, news_summary = news_summary[:300]+ "...")
+					news_rank = news_rank + 1
+				except Exception as e:
+					print(e)
+			if(cnt_post > 30):
+				break
+	start_clustering()
 	return HttpResponse("data loading done")
 
 
@@ -324,13 +428,26 @@ def get_similarity_matrix(content_as_str, global_cleaned_content_as_str):
 	similarity_matrix = cosine_similarity(tfidf_matrix)
 	return (similarity_matrix, tfidf_matrix)
 
+"""
+client_ip = "1.7.255.255"
+
+def get_us(request):
+	print("evfefvefrverv")
+	global client_ip
+	client_ip = "17.0.0.1"
+	print(client_ip)
+	return show_news(request,1)
+
+print(client_ip)
+"""
+
 def get_top_stories(request):
 	return show_news(request, 1)
 
 def get_sports(request):
 	return show_news(request, 2)
 	
-def get_trending(request):
+def get_entertainment(request):
 	return show_news(request, 3)
 
 def get_technology(request):
@@ -338,19 +455,20 @@ def get_technology(request):
 
 def get_business(request):
 	return show_news(request, 5)
-	
 
-def get_cluster_kmeans(tfidf_matrix, num_clusters):
-    km = KMeans(n_clusters = num_clusters)
-    km.fit(tfidf_matrix)
-    cluster_list = km.labels_.tolist()
-    return cluster_list	
+def get_science(request):
+	return show_news(request,6)
+
+def get_world(request):
+	return show_news(request,7)	
+
 
 def show_news(request, category):
-	client_ip = get_client_ip(request)
+	#client_ip = get_client_ip(request)
 	reader = geolite2.reader()
-	print(client_ip)
+	#print(client_ip)
 	client_ip = '1.7.255.255'
+	print(client_ip)
 	d = reader.get(client_ip)
 	country_name = d['country']['names']['en']
 	print(country_name)
@@ -361,11 +479,46 @@ def show_news(request, category):
 
 	category_instance = Category.objects.get(category_id = category)
 
-	global_news_instance = News.objects.filter(news_country_id = country_instance.country_id)
-	news_instance = News.objects.filter(news_category=category, news_country_id = country_instance.country_id)
-	list_of_cluster = clusttering(news_instance,global_news_instance)
+	list_of_cluster = fetch_all_clusters(category, country_instance.country_id)
+	#list_of_keyword = get_in_the_news_keywords()
+
 	return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_instance.category_name})
-	
+
+
+def fetch_all_clusters(category, country_id):
+	clusters = Cluster.objects.filter(cluster_country_id = country_id, cluster_category_id = category)
+	list_of_cluster = []
+	for cluster in clusters:
+		print(cluster.cluster_rank)
+		list_of_cluster.append(fetch_cluster_news(cluster.cluster_id,country_id, category))
+
+	return list_of_cluster
+
+def get_time(date):
+			now = datetime.now(timezone.utc)
+			delta = now - date
+			days, seconds = delta.days, delta.seconds
+
+			if days > 0 :
+				return str(days) + " days ago"
+			else:
+				hours = days*24 + seconds // 3600
+				if hours > 5 :
+					return "today"
+				else:
+					if hours > 0 :
+						return str(hours) + " hours ago"
+					else:
+						minutes = ((seconds % 3600) // 60) + 1
+						return str(minutes) + " minutes ago"
+
+
+def fetch_cluster_news(cluster_id, cluster_country_id, cluster_category_id):
+	news_list = []
+	news_instance = News.objects.filter(news_cluster_id = cluster_id, news_country_id = cluster_country_id, news_category = str(cluster_category_id))
+	for news in news_instance:
+		news_list.append((news.news_url,news.news_title,news.news_img_url, get_time(news.news_date), news.news_rank,news.news_org_name,news.news_summary))
+	return news_list
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -377,40 +530,61 @@ def get_client_ip(request):
 
 
 def start_clustering():
-	categories = 5
-	num_countries = 2
+	categories = 7
+	num_countries = 1
 	for x in range(num_countries):
 		for y in range(categories):
 			global_news_instance = News.objects.filter(news_country_id = x+1)
 			news_instance = News.objects.filter(news_category=y+1, news_country_id = x+1)
-			list_of_cluster = clusttering(news_instance,global_news_instance)
-
+			clusttering(news_instance,global_news_instance, x+1, y+1)
 
 
 def sortrank(val):
-	return val[4]
+	return int(val[4])
 
-def clusttering(news_instance, global_news_instance):
+def sortbyscore(val):
+	return val[0]
+
+def get_rank(category, rss_link):
+	if category == 1 :
+		rss_object = Rsslinks1.objects.get(rss_link = rss_link)
+		return rss_object.link_rank
+	if category == 2 :
+		rss_object = Rsslinks2.objects.get(rss_link = rss_link)
+		return rss_object.link_rank
+	if category == 3 :
+		rss_object = Rsslinks3.objects.get(rss_link = rss_link)
+		return rss_object.link_rank
+	if category == 4 :
+		rss_object = Rsslinks4.objects.get(rss_link = rss_link)
+		return rss_object.link_rank
+	if category == 5 :
+		rss_object = Rsslinks5.objects.get(rss_link = rss_link)
+		return rss_object.link_rank
+	if category == 6 :
+		rss_object = Rsslinks6.objects.get(rss_link = rss_link)
+		return rss_object.link_rank
+	if category == 7 :
+		rss_object = Rsslinks7.objects.get(rss_link = rss_link)
+		return rss_object.link_rank
+
+def clusttering(news_instance, global_news_instance, country_id, category):
+	print("******************************Clustering Started***************************************")
+	
 	url_list = []
-	rank_list = []
-	title_list = []
 	cleaned_content_as_str = []
 	global_cleaned_content_as_str = []
-	img_url = []
 	published_date = []
-	org_name_list = []
+	rss_link_list = []
 
 	for article in global_news_instance:
 		global_cleaned_content_as_str.append(article.news_body)
 
 	for article in news_instance:
-		org_name_list.append(article.news_org_name)
-		rank_list.append(article.news_rank)
 		url_list.append(article.news_url)
-		title_list.append(article.news_title)
 		cleaned_content_as_str.append(article.news_body)
-		img_url.append(article.news_img_url)
 		published_date.append(article.news_date)
+		rss_link_list.append(article.news_rsslink)
 
 	(similarity_matrix, tfidf_matrix) = get_similarity_matrix(cleaned_content_as_str,global_cleaned_content_as_str)
 	dist = 1 - cosine_similarity(tfidf_matrix)
@@ -423,45 +597,48 @@ def clusttering(news_instance, global_news_instance):
 	cluster_labels = fcluster(Z, 1.33, criterion='distance')
 	d = {}
 	iterator_index = 0
+
+	Cluster.objects.filter(cluster_category_id = category, cluster_country_id = country_id).delete() 
+
 	for x in cluster_labels:
 		if x not in d:
 			d[x] = []
-		d[x].append((url_list[iterator_index],title_list[iterator_index], img_url[iterator_index], published_date[iterator_index], rank_list[iterator_index], org_name_list[iterator_index]))
+			Cluster.objects.create(cluster_id = x, cluster_rank = 0, cluster_category_id = category, cluster_country_id = country_id)
+		d[x].append((published_date[iterator_index], get_rank(category,rss_link_list[iterator_index])))
+		#d[x].append((url_list[iterator_index],title_list[iterator_index], img_url[iterator_index], published_date[iterator_index], rank_list[iterator_index], org_name_list[iterator_index],get_rank(category,rss_link_list[iterator_index]),summary_list[iterator_index]))
+		News.objects.filter(news_url = url_list[iterator_index]).update(news_cluster_id = x)
 		iterator_index = iterator_index + 1
-		
-	list_of_clusters = []
+
+	cluster_scores = []
 
 	for key in d:
 		news_list = []
-			#response_string = response_string + "<h3>" + str(key) + "</h3> <br>"
-		for urls,title,img,date,rank,org_name in d[key]:
+		score1 = 0
+		score2 = 0
+		org_dict = {}
+		for date,org_rank in d[key]:
+			if org_rank not in org_dict:
+				org_dict[org_rank] = []
+				if org_rank < 6 : 
+					score2 = score2 + 1
+			org_dict[org_rank].append(org_rank)
 			now = datetime.now(timezone.utc)
 			delta = now - date
 			days, seconds = delta.days, delta.seconds
 
 			if days > 0 :
-				news_list.append((urls, title, img, str(days) + " days ago", rank, org_name))
+				print("No score given")
 			else:
 				hours = days*24 + seconds // 3600
-				if hours > 5 :
-					news_list.append((urls, title, img, "today", rank, org_name))
-				else:
-					if hours > 0 :
-						news_list.append((urls, title, img, str(hours) + " hours ago", rank, org_name))
-					else:
-						minutes = (seconds % 3600) // 60
-						news_list.append((urls, title, img, str(minutes) + " minutes ago", rank, org_name))	
+				tmp = 1 / (hours+1)
+				score1 = score1 + tmp 				
+		score2 = score2 + 1
+		cluster_scores.append((score1*score2,key))
 
-			#print("----")
-			#print(now)
-			#print(date)
-			#print(now-date)
-			#print("----")
-			#news_list.append((urls, title, img, date, rank, org_name))
-			#response_string = response_string + "<h3>" + title + "</h3> <br> <a href=" + urls + ">Link</a> <br>"
-		
-		news_list.sort(key = sortrank)
+	cluster_scores.sort(key = sortbyscore)	
 
-		list_of_clusters.append(news_list)
+	rank_start = len(d)
 
-	return list_of_clusters
+	for x,y in cluster_scores:
+		Cluster.objects.filter(cluster_id = y, cluster_category_id = category, cluster_country_id = country_id).update(cluster_rank = rank_start)
+		rank_start = rank_start - 1
