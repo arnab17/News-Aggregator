@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>Media.net News</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -11,21 +11,14 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"> </script>
+
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"> </script>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
   <style>    
     /* Set black background color, white text and some padding */
-      footer {
-          background-color: #555;
-          color: white;
-        padding: 15px;
-      }
+  
     
       body {
           padding-bottom: 40px;
@@ -33,7 +26,11 @@
       }
 
       .sidebar-nav-fixed {
-          width:14%;
+          width:200px;
+          z-index: 1;
+          background-color: #f1f1f1;
+           height: 100%;
+
       }
       .navbar {
     -webkit-box-shadow: 0 8px 6px -6px #999;
@@ -45,11 +42,46 @@
 
 #navBarSearchForm input[type=text]{width:580px !important;}
 
+/*update toggle */
+
+
+div.content {
+  margin-left: 215px;
+  padding: 1px 16px;
+  height: 1000px;
+}
+
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+
+/* end toggle */
+
+
   </style>
 
 </head>
 <body>
-
+<script>
+    
+    function changeName(bttn){
+    
+    if($("#"+bttn.id).html()=="View more"){
+        $("#"+bttn.id).html("View less");
+    }
+    else{
+        $("#"+bttn.id).html("View more");
+    }
+}
+</script>
 <div class="navbar navbar-fixed-top navbar-default navbar-expand-sm mt-4">
   <div class="shadow p-3 mb-5 bg-white rounded">
     
@@ -78,9 +110,16 @@
 
 </div>
 
+
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2">
+  <div class="hidden">
+  </br>
+</br>
+</br>
+  </div>
+</div>
+<div class="container-fluid">
+   
          
             <div class="sidebar-nav-fixed affix">  
                <div id="topheader">
@@ -93,16 +132,27 @@
                     <li class="{% ifequal request.path '/google_news/Business/'%} active {% endifequal%}"><a href="{% url 'business' %}"><i class="fas fa-briefcase" style="margin-right: 5%"></i>Business</a></li>
                     <li class="{% ifequal request.path '/google_news/Science/'%} active {% endifequal%}"><a href="{% url 'science' %}"><i class="fas fa-flask" style="margin-right: 5%"></i>Science</a></li>
                     <li class="{% ifequal request.path '/google_news/World/'%} active {% endifequal%}"><a href="{% url 'world' %}"><i class="fas fa-globe-asia" style="margin-right: 5%"></i>World</a></li>
+
+
+    
+            
                 </ul>
-                <br>
+                 
+                <hr style="border-color:grey"></hr>
+
+                 <ul class="nav nav-pills nav-stacked">
+                      <li ><a href=" {% url 'fetch_location' '1' %}"><i class="fas fa-globe-asia" style="margin-right: 5%"></i>India</a></li>
+                     <li ><a href=" {% url 'fetch_location' '2' %}"><i class="fas fa-globe-asia" style="margin-right: 5%"></i>USA</a></li>
+                  </ul>
             </div>
           </div>
-        </div>
+       
 
 <!-- Nav complete -->
-
-        <div class="col-sm-7">
-            
+ <div class="row">
+      
+        <div class="col-sm-9">
+             <div class = "content">
             <div class="row">
                 <div class="panel-group">
                    
@@ -114,7 +164,7 @@
                 </div>
             </div>
         </div>
-     
+     </div>
      
      <!-- Middle part complete -->
 

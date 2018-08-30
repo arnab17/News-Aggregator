@@ -12,27 +12,36 @@
         
                 
                 
-                <a href= {{cluster.0.0}} style="color: black"><h4><b>{{cluster.0.1}}</b></br> <small>{{cluster.0.5}}</small><small>{{"&nbsp; . &nbsp;"}}</small> <small>{{cluster.0.3}}</small><br><small>{{cluster.0.6}}</small></h4></a></br>
+                <a href= {{cluster.0.0}} style="color: black" target="_blank"><h4><b>{{cluster.0.1}}</b></br> <small>{{cluster.0.5}}</small><small>{{"&nbsp; . &nbsp;"}}</small> <small>{{cluster.0.3}}</small><br><small>{{cluster.0.6}}</small></h4></a></br>
 
-                        <ul style="font-weight: bold;">
+                        <div style="font-weight: bold;">
                                  {%for url,title,img,date,rank,org_name,summary in cluster%}
-                                 {% if not forloop.first %}
-                                    <li><a href = {{url}} style="color: black">{{title}}</a></br> <small>{{org_name}}</small><small>{{"&nbsp; . &nbsp;"}}</small><small>{{date}}</small></li>
+                                 {% if not forloop.first and forloop.counter < 3%}
+                                    <li><a href = {{url}} style="color: black" target="_blank">{{title}}</a></br> <small>&emsp;&ensp;{{org_name}}</small><small>{{"&nbsp; . &nbsp;"}}</small><small>{{date}}</small></li>
                                  {% endif%}
                                  {%endfor%}
+                             </div>
+                                 <div id="collapsible{{forloop.counter}}" class="collapse" style="font-weight: bold;">
+                                {%for url,title,img,date,rank,org_name,summary in cluster%}
+                                     {% if forloop.counter >= 3%}
+                                        <li><a href = {{url}} style="color: black" target="_blank">{{title}}</a></br> <small>&emsp;&ensp;{{org_name}}</small><small>{{"&nbsp; . &nbsp;"}}</small><small>{{date}}</small></li> 
+                                        {%endif%}
+                                {%endfor%}
+                                </div>   
                                
-                        </ul>
-                
+         
         </div>
 
         <div class="col-sm-2 text-center">
-                        <img src={{cluster.0.2}} class="img-rounded" height="105" width="105" alt="Avatar">
-                        </br>
-                        </br>
-
+                     <img src={{cluster.0.2}} class="img-rounded" height="105" width="105" alt="Avatar">
         </div>
-        </div>  
+
+</div>  
+<div  align="right" style="margin-bottom: 2%; margin-right: 2%;">
+        <button id="collapseButton{{forloop.counter}}" type="button" class="btn btn-default" data-toggle="collapse" data-target="#collapsible{{forloop.counter}}" onclick="changeName(this)" style=" font-size: 90%">View more</button>
 </div>
+</div>
+
 
 {%endfor%}
 {% endblock %}
@@ -40,9 +49,10 @@
 {%block content%}
 
 {%for word in list_of_keyword%}
-<a href="http://localhost:8000/google_news/showkeywordnews/{{word}}" class="btn btn-default" role="button">{{word}}</a>
+<a href="{% url 'open_keyword_page' word %}" class="btn btn-default" role="button" style="margin: 1%; font-size: 90%">{{word}}</a>
 {%endfor%}
 {%endblock%}
+
 
 
 

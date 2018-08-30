@@ -38,7 +38,7 @@ class Cluster(models.Model):
 	
 	class Meta:
 		ordering = ['cluster_rank']	
-
+		unique_together = ('cluster_id','cluster_category_id','cluster_country_id',)
 class Category(models.Model):
 	category_id = models.CharField(max_length=500)
 	category_name = models.CharField(max_length=500)	
@@ -95,3 +95,16 @@ class Keyword(models.Model):
 	keyword_name = models.CharField(max_length = 500)
 	news_url = models.CharField(max_length = 500)
 
+	class Meta:
+			unique_together = ('keyword_name','news_url',)
+
+class Cached_Keyword(models.Model):
+    keyword_name = models.CharField(max_length = 500)
+    keyword_country_id  = models.IntegerField(default = 0)
+	
+    class Meta:
+    	unique_together = ('keyword_name','keyword_country_id',)
+
+class Location(models.Model):
+	ip_address = models.CharField(max_length = 2000, default = 'some_ip')
+	location_id = models.IntegerField(default = 0)
