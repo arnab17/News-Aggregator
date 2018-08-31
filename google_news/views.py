@@ -110,13 +110,13 @@ def delete_news_rss():
 
 def fetching_news(request):
 	num_category = 7
-	start_clustering()
-	Cached_Keyword.objects.all().delete()
-	get_in_the_news_keywords(1)
-	get_in_the_news_keywords(2)
-	return HttpResponse("data loading done")
+	# start_clustering()
+	# Cached_Keyword.objects.all().delete()
+	# get_in_the_news_keywords(1)
+	# get_in_the_news_keywords(2)
+	# return HttpResponse("data loading done")
 
-"""
+
 	rss_links = Rsslinks1.objects.all()
 	print("Getting the news for Category 1")
 	for links in rss_links:
@@ -572,7 +572,6 @@ def fetching_news(request):
 	get_in_the_news_keywords(1)
 	get_in_the_news_keywords(2)
 	return HttpResponse("data loading done")
-"""
 
 #tfidf_vectorizer = TfidfVectorizer(use_idf=True, ngram_range=(1,3))
 #tfidf_matrix = tfidf_vectorizer.fit_transform(content_as_str) #fit the vectorizer to synopses
@@ -584,22 +583,6 @@ def get_similarity_matrix(content_as_str, global_cleaned_content_as_str):
 	similarity_matrix = cosine_similarity(tfidf_matrix)
 	return (similarity_matrix, tfidf_matrix)
 
-"""
-def get_top_stories_us(request):
-	return show_news(request,1,2)
-def get_sports_us(request):
-	return show_news(request,2,2)
-def get_entertainment_us(request):
-	return show_news(request,3,2)
-def get_technology_us(request):
-	return show_news(request,4,2)
-def get_business_us(request):
-	return show_news(request,5,2)
-def get_science_us(request):
-	return show_news(request,6,2)
-def get_world_us(request):
-	return show_news(request,7,2)
-"""
 
 def get_top_stories(request):
 	return show_news(request, 1)
@@ -663,176 +646,207 @@ def get_location(client_ip):
 def change_location(request, country):
 	print("Changing location to - ", country)
 	client_ip = get_client_ip(request)
-	#Location.objects.all().delete()
 	Location.objects.filter(ip_address = client_ip).update(location_id = country)
-	#Location.objects.create(location_id = country)
 	return redirect('/google_news/')
 
 def show_news(request, category):
-	#client_ip = get_client_ip(request)
-	#reader = geolite2.reader()
-	#print(client_ip)
-	#client_ip = '1.7.255.255'
-	#print(client_ip)
-	#d = reader.get(client_ip)
-	#country_name = d['country']['names']['en']
-	#print(country_name)
-
-	#country_instance = Country.objects.get(country_name = country_name)
-
-	#print(country_instance.country_id)
-
-	#correct_keywords()
 
 	category_instance = Category.objects.get(category_id = category)
 
 	country_id = get_location(get_client_ip(request))
+	country = Country.objects.get(country_id=country_id).country_name
+	print(country)
 
-	list_of_cluster = fetch_all_clusters(category, country_id)
+	list_of_cluster = fetch_all_clusters(category, country_id)[:100]
 	list_of_keyword = show_keywords(country_id)
 	if len(list_of_keyword) == 0:
 		list_of_keyword = get_in_the_news_keywords(country_id)
-	#print(list_of_keyword, "*********list of kw************")
-	#k = Keyword.objects.filter(keyword_name = '')
-	#print(k)
-	#k =  Keyword.objects.filter(keyword_name = ' ')
-	#print(k)
 
-
-	return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_instance.category_name, 'list_of_keyword':list_of_keyword})
+	return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_instance.category_name, 'list_of_keyword':list_of_keyword, 'country':country})
 
 def show_keywords(country_id):
 	return [key.keyword_name for key in Cached_Keyword.objects.filter(keyword_country_id=country_id)]
 
 def search_news(request):
-	if request.method == 'GET':
-		search_query = request.GET.get('search', None)
+		if request.method == 'GET':
+			search_query = request.GET.get('search', None)
 
 		country_id = get_location(get_client_ip(request))
-
+		country = Country.objects.get(country_id=country_id).country_name
 		list_of_cluster = []
+
 		list_of_keyword = show_keywords(country_id)
 		keywords = {}
 		category_name = search_query
+		#if '' == search_query.strip():
+		#	return HttpResponse('Keywords Kon Dalega? Mai... :|')
+		#else:
+		tags = []
+		t = []
+		s = re.findall(r"[\D\s]+",search_query)
+		for ss in s:
+			t += re.findall(r"[\w\s]+",ss)
+		for w in t:
+			for term in w.split():
+				if len(term) > 2:
+					tags.append(term)
+		if len(tags) < 1:
+			for w in t:
+				tags.append(w)
 		
-		keyword_mapping = {}
-
-		tags = search_query.split()
-		len_of_query = len(tags)
-		print("Stripped Tags : ")
 		print(tags)
 		for k in Keyword.objects.all():
 			k_name = k.keyword_name.lower().split()
 			for name in k_name:
+				if name not in keywords:
+					keywords[name] = []
+				if k.news_url not in keywords[name]:
+					keywords[name].append(k.news_url)
+		
+		keyss = []
+		for ke in tags:
+
+			temp = []
+			ke = ke.lower() 
+			temp= difflib.get_close_matches(ke, [k for k in keywords.keys()], cutoff = 0.85)
+			if ke not in keywords and len(temp) > 0:
+				ke = temp[0]
+			keyss.append(ke)
+			print(temp)
+			for k in temp:
+				for n in keywords[k]:
+					if n not in keywords[ke]:
+						keywords[ke].append(n)
+		matching_news = {}
+		
+		print(keyss, "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999")
+		for k in keyss:
+			if k.lower() in keywords: 
+				for article_url in keywords[k.lower()]:
+					if article_url not in matching_news:
+						matching_news[article_url] = 0
+					matching_news[article_url] += 1
+
+				#print(matching_news[article_url], key,"88888*******COUNT**********\n")
+		#print(matching_news)
+		sorted_list_of_news = sorted(matching_news, key=matching_news.get, reverse=True)
+		print("Newsurllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllssssssssssssss", sorted_list_of_news)
+		list_of_cluster = []
+		for article_url in sorted_list_of_news:
+			try:
+				if len(tags) < 3 and matching_news[article_url] < len(tags):
+					continue
+
+				elif len(tags) > 2 and matching_news[article_url] < 2:
+					continue
+				news = News.objects.get(news_url = article_url)
+				cluster = [(news.news_url, news.news_title, news.news_img_url, get_time(news.news_date), news.news_rank,news.news_org_name,news.news_summary)]
+				if check_keywords_in_title(tags,news):
+					list_of_cluster.insert(0,cluster)
+				else:
+					list_of_cluster.append(cluster)
+			except:
+				print(article_url)
+		return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_name, 'list_of_keyword':list_of_keyword, 'country':country})
+
+
+def check_keywords_in_title(keys, news):
+	print(keys,"*********check keyword")
+	matches = []
+	title = []
+	print("****",news.news_title)
+	for l in re.findall(r"[\w\s]+",news.news_title):
+		title += l.lower().split()
+	print(title,"\n******************title")
+	for key in keys:		
+		for w in difflib.get_close_matches(key, title, cutoff = 0.85):
+			if len(difflib.get_close_matches(w, matches, cutoff = 0.85)) > 0:
+				continue
+			matches.append(w)
+
+	print(matches)
+	if len(keys) < 3 and len(matches) < len(keys):
+		return False	
+	elif len(keys) > 2 and len(matches) < 2:
+		return False
+	return True
+
+
+def open_keyword_page(request,key):
+		list_of_cluster = []
+
+		country_id = get_location(get_client_ip(request))
+		country = Country.objects.get(country_id=country_id).country_name
+		list_of_keyword = show_keywords(country_id)
+		keywords = {}
+		print("*********************start show keywords**********************************88")
+		category_name = key.upper()
+		
+		tags = []
+		t = []
+		s = re.findall(r"[\D\s]+",key)
+		print(s)
+		for ss in s:
+			t += re.findall(r"[\w\s]+",ss)
+		print(t)
+		for w in t:
+			for term in w.split():
+				if len(term) > 2:
+					tags.append(term)
+
+		if len(tags) < 1:
+			for w in t:
+				tags.append(w)
+		print(tags,"********************TAGS***********************************************************************************************************")
+		for k in Keyword.objects.all():
+			k_name = k.keyword_name.lower().split()
+			for name in k_name:			
 				if name not in  keywords:
 					keywords[name] = []
 				if k.news_url not in keywords[name]:
 					keywords[name].append(k.news_url)
-		keys = []
-		for key in tags:
-			key = key.lower()
-			gen_keys = difflib.get_close_matches(key, [k for k in keywords.keys()], cutoff = 0.7)
-			for new_keys in gen_keys :
-				if new_keys not in keyword_mapping :
-					keyword_mapping[new_keys] = []
-				keyword_mapping[new_keys] = key
-				# In the keyword mapping dictionary we create a mapping of the derived word to the root word  
-			keys += difflib.get_close_matches(key, [k for k in keywords.keys()], cutoff = 0.7)
+	
+		
+		for ke in tags:
+			temp = []
+			ke = ke.lower() 
+			temp= difflib.get_close_matches(ke, [k for k in keywords.keys()], cutoff = 0.85)
+			print(temp)
+			for k in temp:
+				for n in keywords[k]:
+					if n not in keywords[ke]:
+						keywords[ke].append(n)
 		matching_news = {}
-		url_keyword_votes = {}
-		print(keys)
-		for key in keys:
-			root_key = keyword_mapping[key]
-			for article_url in keywords[key]:
-				if article_url not in url_keyword_votes :
-					url_keyword_votes[article_url] = []
-				if root_key in url_keyword_votes[article_url] :
-					continue
-				else :
+	
+		for k in tags:
+			if k.lower() in keywords: 
+				for article_url in keywords[k.lower()]:
 					if article_url not in matching_news:
 						matching_news[article_url] = 0
-					url_keyword_votes[article_url].append(root_key)
 					matching_news[article_url] += 1
-		
-		#sorted_list_of_news = sorted(matching_news, key=matching_news.get, reverse=True)
-
-		max_val = 0
-
-		for key,value in matching_news.items() :
-			max_val = max(max_val, value)
-
-		new_news = {}
-
-		for key,value in matching_news.items() :
-			if value == 1 :
-				if max_val > value :
-					if len_of_query == 1 :
-						new_news[key] = value
-					else :
-						continue
-				else :
-					new_news[key] = value
-			else :
-				new_news[key] = value
-
-		sorted_list_of_news = sorted(new_news, key=matching_news.get, reverse=True)
-
+				#print(matching_news[article_url], key,"88888*******COUNT**********\n")
+		#print(matching_news)
+		sorted_list_of_news = sorted(matching_news, key=matching_news.get, reverse=True)
 		list_of_cluster = []
 		for article_url in sorted_list_of_news:
 			try:
+				
+				if len(tags) < 3 and matching_news[article_url] < len(tags):
+					continue
+
+				elif len(tags) > 2 and matching_news[article_url] < 2:
+					continue
+
 				news = News.objects.get(news_url = article_url)
-				tlen = len(tags)
-				tmp = 0
-				for key in tags :
-					key = key.lower()
-					print(key)
-					print(news.news_url)
-					if key in news.news_body :
-						tmp = tmp + 1
-
-				val = tmp / tlen
-
-				print(val)
-				#if val > 0.5 :
 				cluster = [(news.news_url, news.news_title, news.news_img_url, get_time(news.news_date), news.news_rank,news.news_org_name,news.news_summary)]
-				list_of_cluster.append(cluster)
-			except:
-				print("Some error occured")
-
-		return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_name, 'list_of_keyword':list_of_keyword})
-	
-
-def open_keyword_page(request,key):
-	country_id = get_location(get_client_ip(request))
-	list_of_cluster = []
-	list_of_keyword = show_keywords(country_id)
-	keywords = {}
-	print("*********************start show keywords**********************************88")
-	for k in Keyword.objects.all():
-		k_name = k.keyword_name.lower();
-		if k_name not in  keywords:
-			keywords[k_name] = []
-		keywords[k_name].append(k.news_url)
-	keys = difflib.get_close_matches(key, [k for k in keywords.keys()], cutoff = 0.82)
-	print(keys)
-	category_name = key.upper()
-	print(len(keywords), '**************************')
-	visited = []
-	print(len(News.objects.all()))
-	for k in keys:
-		for article_url in keywords[k]: 
-			if article_url not in visited:
-				visited.append(article_url)
-				print(article_url)
-				try:
-					news = News.objects.get(news_url = article_url)
-					print(news)
-					cluster = [(news.news_url, news.news_title, news.news_img_url, get_time(news.news_date), news.news_rank,news.news_org_name,news.news_summary)]
+				if check_keywords_in_title(tags,news):
+					list_of_cluster.insert(0,cluster)
+				else:
 					list_of_cluster.append(cluster)
-				except:
-					print("Gone wrong")
-	return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_name, 'list_of_keyword':list_of_keyword})
-
+			except:
+				print(article_url)
+		return render(request, 'google_news/post_list.html', {'list_of_cluster':list_of_cluster, 'category':category_name, 'list_of_keyword':list_of_keyword, 'country':country})
+	
 
 def get_in_the_news_keywords(country_id):
 	list_of_cluster = []
@@ -873,10 +887,9 @@ def get_top_keywords(temp_list):
 	return sorted(keywords, key=keywords.get, reverse=True)[:1]
 
 def fetch_all_clusters(category, country_id):
-	clusters = Cluster.objects.filter(cluster_country_id = country_id, cluster_category_id = category)
+	clusters = Cluster.objects.filter(cluster_country_id = country_id, cluster_category_id = category)[:100]
 	list_of_cluster = []
 	for cluster in clusters:
-		#print(cluster.cluster_id)
 		list_of_cluster.append(fetch_cluster_news(cluster.cluster_id,country_id, category))
 
 	return list_of_cluster
@@ -902,9 +915,19 @@ def get_time(date):
 
 def fetch_cluster_news(cluster_id, cluster_country_id, cluster_category_id):
 	news_list = []
+	days_dict = {}
 	news_instance = News.objects.filter(news_cluster_id = cluster_id, news_country_id = cluster_country_id, news_category = str(cluster_category_id))
 	for news in news_instance:
-		news_list.append((news.news_url,news.news_title,news.news_img_url, get_time(news.news_date), news.news_rank,news.news_org_name,news.news_summary))
+		now = datetime.now(timezone.utc)
+		delta = now - news.news_date
+		days, seconds = delta.days, delta.seconds
+		if days < 1 :
+			news_list.append((news.news_url,news.news_title,news.news_img_url, get_time(news.news_date), news.news_rank,news.news_org_name,news.news_summary))
+		else :
+			if days not in days_dict :
+				days_dict[days] = 1
+				news_list.append((news.news_url,news.news_title,news.news_img_url, get_time(news.news_date), news.news_rank,news.news_org_name,news.news_summary))				
+
 	return news_list
 
 def get_client_ip(request):
@@ -1040,7 +1063,7 @@ def clusttering(news_instance, global_news_instance, country_id, category):
 				tmp = 1 / (hours+1)
 				score1 = score1 + tmp 				
 		
-		cluster_scores.append((score1*score2,key,float(tie_break_score)))
+		cluster_scores.append(((score1*score2),key,float(tie_break_score)))
 
 	#cluster_scores.sort(key = sortbyscore)	
 

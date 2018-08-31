@@ -1,5 +1,10 @@
 {% extends 'google_news/ui.html' %}
 
+
+{%block loc%}
+{{country}}
+{%endblock%}
+
 {% block cont %}
 
  <h4><strong><big> {{category}}</strong></big> </h4>
@@ -9,9 +14,7 @@
         
 <div class="panel-body">
         <div class="col-sm-10" >
-        
-                
-                
+              
                 <a href= {{cluster.0.0}} style="color: black" target="_blank"><h4><b>{{cluster.0.1}}</b></br> <small>{{cluster.0.5}}</small><small>{{"&nbsp; . &nbsp;"}}</small> <small>{{cluster.0.3}}</small><br><small>{{cluster.0.6}}</small></h4></a></br>
 
                         <div style="font-weight: bold;">
@@ -40,6 +43,14 @@
 <div  align="right" style="margin-bottom: 2%; margin-right: 2%;">
         <button id="collapseButton{{forloop.counter}}" type="button" class="btn btn-default" data-toggle="collapse" data-target="#collapsible{{forloop.counter}}" onclick="changeName(this)" style=" font-size: 90%">View more</button>
 </div>
+  {% with forloop.counter|stringformat:"s" as id %}
+                {% with "collapseButton"|add:id as button_id %}
+               
+                {%if cluster|length < 3%}
+                    <script >hidebutton("{{button_id}}"); </script>
+                {%endif%}
+                {%endwith%}
+                {%endwith%}
 </div>
 
 
